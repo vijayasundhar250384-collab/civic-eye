@@ -65,7 +65,7 @@ function CapturePage() {
             locality?: string;
             city?: string;
             principalSubdivision?: string;
-􀀀          };
+};
           address = [info.locality, info.city, info.principalSubdivision]
             .filter(Boolean)
             .join(", ");
