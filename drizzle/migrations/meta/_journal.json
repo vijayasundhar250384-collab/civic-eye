@@ -1,5 +1,13 @@
 {
   "version": "7",
   "dialect": "postgresql",
-  "entries": []
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1788797747856,
+      "tag": "0000_civiclens_core",
+      "breakpoints": true
+    }
+  ]
 }

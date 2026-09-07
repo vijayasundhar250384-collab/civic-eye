@@ -14,16 +14,243 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      officers: {
+        Row: {
+          area: Database["public"]["Enums"]["area_type"]
+          category: Database["public"]["Enums"]["issue_category"]
+          contact: string | null
+          created_at: string
+          department: string
+          designation: string
+          escalation_authority: string
+          id: string
+          name: string
+          ward: string
+        }
+        Insert: {
+          area?: Database["public"]["Enums"]["area_type"]
+          category: Database["public"]["Enums"]["issue_category"]
+          contact?: string | null
+          created_at?: string
+          department: string
+          designation: string
+          escalation_authority?: string
+          id?: string
+          name: string
+          ward: string
+        }
+        Update: {
+          area?: Database["public"]["Enums"]["area_type"]
+          category?: Database["public"]["Enums"]["issue_category"]
+          contact?: string | null
+          created_at?: string
+          department?: string
+          designation?: string
+          escalation_authority?: string
+          id?: string
+          name?: string
+          ward?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          full_name: string | null
+          id: string
+          username: string
+          ward: string | null
+        }
+        Insert: {
+          created_at?: string
+          full_name?: string | null
+          id: string
+          username: string
+          ward?: string | null
+        }
+        Update: {
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          username?: string
+          ward?: string | null
+        }
+        Relationships: []
+      }
+      report_events: {
+        Row: {
+          created_at: string
+          detail: string
+          id: string
+          kind: string
+          label: string
+          report_id: string
+        }
+        Insert: {
+          created_at?: string
+          detail?: string
+          id?: string
+          kind?: string
+          label: string
+          report_id: string
+        }
+        Update: {
+          created_at?: string
+          detail?: string
+          id?: string
+          kind?: string
+          label?: string
+          report_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_events_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reports: {
+        Row: {
+          address: string
+          ai_authenticity: number
+          ai_confidence: number
+          ai_duplicate_risk: number
+          ai_notes: string
+          ai_verified: boolean
+          area: Database["public"]["Enums"]["area_type"]
+          category: Database["public"]["Enums"]["issue_category"]
+          created_at: string
+          description: string
+          escalated: boolean
+          escalated_at: string | null
+          escalation_note: string | null
+          id: string
+          latitude: number
+          longitude: number
+          officer_id: string | null
+          photo_url: string
+          resolved_at: string | null
+          resolved_photo_url: string | null
+          severity: string
+          sla_hours: number
+          status: Database["public"]["Enums"]["report_status"]
+          user_id: string
+        }
+        Insert: {
+          address?: string
+          ai_authenticity?: number
+          ai_confidence?: number
+          ai_duplicate_risk?: number
+          ai_notes?: string
+          ai_verified?: boolean
+          area?: Database["public"]["Enums"]["area_type"]
+          category: Database["public"]["Enums"]["issue_category"]
+          created_at?: string
+          description?: string
+          escalated?: boolean
+          escalated_at?: string | null
+          escalation_note?: string | null
+          id?: string
+          latitude: number
+          longitude: number
+          officer_id?: string | null
+          photo_url: string
+          resolved_at?: string | null
+          resolved_photo_url?: string | null
+          severity?: string
+          sla_hours?: number
+          status?: Database["public"]["Enums"]["report_status"]
+          user_id: string
+        }
+        Update: {
+          address?: string
+          ai_authenticity?: number
+          ai_confidence?: number
+          ai_duplicate_risk?: number
+          ai_notes?: string
+          ai_verified?: boolean
+          area?: Database["public"]["Enums"]["area_type"]
+          category?: Database["public"]["Enums"]["issue_category"]
+          created_at?: string
+          description?: string
+          escalated?: boolean
+          escalated_at?: string | null
+          escalation_note?: string | null
+          id?: string
+          latitude?: number
+          longitude?: number
+          officer_id?: string | null
+          photo_url?: string
+          resolved_at?: string | null
+          resolved_photo_url?: string | null
+          severity?: string
+          sla_hours?: number
+          status?: Database["public"]["Enums"]["report_status"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reports_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "citizen" | "officer" | "admin"
+      area_type: "urban" | "rural"
+      issue_category:
+        | "pothole"
+        | "drainage"
+        | "streetlight"
+        | "garbage"
+        | "water_supply"
+        | "road_damage"
+        | "other"
+      report_status:
+        | "submitted"
+        | "verified"
+        | "assigned"
+        | "in_progress"
+        | "resolved"
+        | "rejected"
+        | "escalated"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +377,27 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["citizen", "officer", "admin"],
+      area_type: ["urban", "rural"],
+      issue_category: [
+        "pothole",
+        "drainage",
+        "streetlight",
+        "garbage",
+        "water_supply",
+        "road_damage",
+        "other",
+      ],
+      report_status: [
+        "submitted",
+        "verified",
+        "assigned",
+        "in_progress",
+        "resolved",
+        "rejected",
+        "escalated",
+      ],
+    },
   },
 } as const
