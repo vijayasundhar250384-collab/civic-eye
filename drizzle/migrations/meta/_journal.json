@@ -8,6 +8,13 @@
       "when": 1788797747856,
       "tag": "0000_civiclens_core",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1788797781894,
+      "tag": "0001_report_photo_storage_policies",
+      "breakpoints": true
     }
   ]
 }
