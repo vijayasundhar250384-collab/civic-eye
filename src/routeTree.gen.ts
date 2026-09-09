@@ -11,8 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthenticatedAuthorityRouteImport } from './routes/_authenticated/authority'
 import { Route as AuthenticatedCaptureRouteImport } from './routes/_authenticated/capture'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedFieldRouteImport } from './routes/_authenticated/field'
 import { Route as AuthenticatedMapRouteImport } from './routes/_authenticated/map'
 import { Route as AuthenticatedOfficersRouteImport } from './routes/_authenticated/officers'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
@@ -28,6 +30,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAuthorityRoute = AuthenticatedAuthorityRouteImport.update({
+  id: '/authority',
+  path: '/authority',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedCaptureRoute = AuthenticatedCaptureRouteImport.update({
   id: '/capture',
   path: '/capture',
@@ -36,6 +43,11 @@ const AuthenticatedCaptureRoute = AuthenticatedCaptureRouteImport.update({
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedFieldRoute = AuthenticatedFieldRouteImport.update({
+  id: '/field',
+  path: '/field',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedMapRoute = AuthenticatedMapRouteImport.update({
@@ -67,8 +79,10 @@ const AuthenticatedReportsIdRoute = AuthenticatedReportsIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/authority': typeof AuthenticatedAuthorityRoute
   '/capture': typeof AuthenticatedCaptureRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/field': typeof AuthenticatedFieldRoute
   '/map': typeof AuthenticatedMapRoute
   '/officers': typeof AuthenticatedOfficersRoute
   '/profile': typeof AuthenticatedProfileRoute
@@ -77,8 +91,10 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/authority': typeof AuthenticatedAuthorityRoute
   '/capture': typeof AuthenticatedCaptureRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/field': typeof AuthenticatedFieldRoute
   '/map': typeof AuthenticatedMapRoute
   '/officers': typeof AuthenticatedOfficersRoute
   '/profile': typeof AuthenticatedProfileRoute
@@ -89,8 +105,10 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/_authenticated/authority': typeof AuthenticatedAuthorityRoute
   '/_authenticated/capture': typeof AuthenticatedCaptureRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/field': typeof AuthenticatedFieldRoute
   '/_authenticated/map': typeof AuthenticatedMapRoute
   '/_authenticated/officers': typeof AuthenticatedOfficersRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
@@ -101,8 +119,10 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/authority'
     | '/capture'
     | '/dashboard'
+    | '/field'
     | '/map'
     | '/officers'
     | '/profile'
@@ -111,8 +131,10 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/authority'
     | '/capture'
     | '/dashboard'
+    | '/field'
     | '/map'
     | '/officers'
     | '/profile'
@@ -122,8 +144,10 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/_authenticated/authority'
     | '/_authenticated/capture'
     | '/_authenticated/dashboard'
+    | '/_authenticated/field'
     | '/_authenticated/map'
     | '/_authenticated/officers'
     | '/_authenticated/profile'
@@ -152,6 +176,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/authority': {
+      id: '/_authenticated/authority'
+      path: '/authority'
+      fullPath: '/authority'
+      preLoaderRoute: typeof AuthenticatedAuthorityRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/capture': {
       id: '/_authenticated/capture'
       path: '/capture'
@@ -164,6 +195,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/field': {
+      id: '/_authenticated/field'
+      path: '/field'
+      fullPath: '/field'
+      preLoaderRoute: typeof AuthenticatedFieldRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/map': {
@@ -205,8 +243,10 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAuthorityRoute: typeof AuthenticatedAuthorityRoute
   AuthenticatedCaptureRoute: typeof AuthenticatedCaptureRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedFieldRoute: typeof AuthenticatedFieldRoute
   AuthenticatedMapRoute: typeof AuthenticatedMapRoute
   AuthenticatedOfficersRoute: typeof AuthenticatedOfficersRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
@@ -215,8 +255,10 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAuthorityRoute: AuthenticatedAuthorityRoute,
   AuthenticatedCaptureRoute: AuthenticatedCaptureRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedFieldRoute: AuthenticatedFieldRoute,
   AuthenticatedMapRoute: AuthenticatedMapRoute,
   AuthenticatedOfficersRoute: AuthenticatedOfficersRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,

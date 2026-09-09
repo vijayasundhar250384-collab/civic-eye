@@ -1,18 +1,11 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-
-const NAV = [
-  { to: "/dashboard", label: "Home" },
-  { to: "/capture", label: "Capture" },
-  { to: "/map", label: "3D Map" },
-  { to: "/reports", label: "Reports" },
-  { to: "/officers", label: "Escalate" },
-  { to: "/profile", label: "Profile" },
-] as const;
+import { useEffect, useState } from "react";
+import { getActiveRole, setActiveRole, type UserRole } from "@/lib/store";
 
 export function AppShell({
   children,
-  subtitle = "Field reporting",
+  subtitle = "Infrastructure Intelligence",
   gpsReady = true,
 }: {
   children: ReactNode;
@@ -20,6 +13,25 @@ export function AppShell({
   gpsReady?: boolean;
 }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const [role, setRole] = useState<UserRole>("CITIZEN");
+
+  useEffect(() => {
+    setRole(getActiveRole());
+  }, [pathname]);
+
+  const navItems = [
+    { to: "/dashboard", label: "Home" },
+    { to: "/capture", label: "Capture" },
+    { to: "/map", label: "3D Map" },
+    { to: "/field", label: "Field" },
+    { to: "/authority", label: "Authority" },
+    { to: "/profile", label: "Profile" },
+  ];
+
+  function switchRole(newRole: UserRole) {
+    setActiveRole(newRole);
+    setRole(newRole);
+  }
 
   return (
     <div className="min-h-screen bg-surface">
@@ -27,10 +39,21 @@ export function AppShell({
         <header className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="grid size-8 place-items-center rounded-[10px] bg-brand text-[11px] font-extrabold tracking-tight text-brand-foreground">
-              CV
+              UB
             </span>
             <div className="leading-tight">
-              <p className="text-[13px] font-semibold text-ink">CivicLens</p>
+              <div className="flex items-center gap-1.5">
+                <p className="text-[13px] font-extrabold text-ink">Urbix AI</p>
+                <select
+                  value={role}
+                  onChange={(e) => switchRole(e.target.value as UserRole)}
+                  className="rounded bg-brand/10 px-1 py-0.5 text-[8px] font-extrabold text-brand uppercase outline-none border-none"
+                >
+                  <option value="CITIZEN">Portal A (Citizen)</option>
+                  <option value="FIELD_OFFICER">Portal B (Field)</option>
+                  <option value="AUTHORITY">Portal C (Authority)</option>
+                </select>
+              </div>
               <p className="text-[10px] font-medium text-muted-foreground">{subtitle}</p>
             </div>
           </div>
@@ -53,7 +76,7 @@ export function AppShell({
 
       <nav className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[430px] px-3 pb-3">
         <div className="grid grid-cols-6 gap-1 rounded-2xl bg-frost/85 p-1.5 shadow-lg ring-1 ring-border backdrop-blur-md">
-          {NAV.map((item) => {
+          {navItems.map((item) => {
             const active = pathname === item.to || pathname.startsWith(`${item.to}/`);
             return (
               <Link
@@ -99,3 +122,4 @@ export function Tile({
     </section>
   );
 }
+

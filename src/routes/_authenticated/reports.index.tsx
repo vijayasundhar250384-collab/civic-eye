@@ -4,18 +4,18 @@ import { useState } from "react";
 import { AppShell, Tile } from "@/components/AppShell";
 import { PhotoImg } from "@/hooks/usePhotoUrl";
 import { supabase } from "@/integrations/supabase/client";
-import { CATEGORIES, categoryLabel, STATUS_LABEL, timeAgo } from "@/lib/civic";
+import { CATEGORIES, categoryLabel, STATUS_LABEL, timeAgo, generateReportId, getAuthorityDepartment } from "@/lib/civic";
 
 export const Route = createFileRoute("/_authenticated/reports/")({
   head: () => ({
     meta: [
-      { title: "All reports — CivicLens" },
+      { title: "All reports — Urbix AI" },
       {
         name: "description",
         content:
-          "Every civic report with its status, category, area and before/after photos.",
+          "Every civic report with its tracking ID, assigned authority department, status, category, and before/after photos.",
       },
-      { property: "og:title", content: "All reports — CivicLens" },
+      { property: "og:title", content: "All reports — Urbix AI" },
       {
         property: "og:description",
         content: "Track civic reports from submitted to resolved.",
@@ -66,7 +66,7 @@ function ReportsPage() {
   });
 
   return (
-    <AppShell subtitle="All reports">
+    <AppShell subtitle="All Reports &amp; Tracking Registry">
       <Tile title="Filters">
         <div className="flex flex-wrap gap-1.5">
           {FILTERS.map((f) => (
@@ -119,47 +119,60 @@ function ReportsPage() {
         }
       >
         <div className="space-y-2">
-          {rows.map((r) => (
-            <Link
-              key={r.id}
-              to="/reports/$id"
-              params={{ id: r.id }}
-              className="tile-solid block p-2"
-            >
-              <div className="flex items-center gap-2.5">
-                <PhotoImg
-                  path={r.photo_url}
-                  alt={categoryLabel(r.category)}
-                  className="size-12 shrink-0 rounded-lg object-cover"
-                />
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-[12px] font-bold text-ink">
-                    {categoryLabel(r.category)}
-                  </p>
-                  <p className="truncate text-[10px] text-muted-foreground">
-                    {r.area === "rural" ? "Rural" : "Urban"} ·{" "}
-                    {r.address || "Pinned location"} · {timeAgo(r.created_at)}
-                  </p>
+          {rows.map((r, idx) => {
+            const reportId = generateReportId(idx + 1040);
+            const authContact = getAuthorityDepartment(r.category, "Ward 07");
+            return (
+              <Link
+                key={r.id}
+                to="/reports/$id"
+                params={{ id: r.id }}
+                className="tile-solid block p-2.5 space-y-1.5 hover:ring-brand/40 transition-all"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-[9px] font-extrabold bg-brand/10 text-brand px-1.5 py-0.5 rounded">
+                    {reportId}
+                  </span>
+                  <span
+                    className={`rounded-lg px-2 py-0.5 text-[9px] font-bold ${
+                      r.status === "resolved"
+                        ? "bg-ok/12 text-ok"
+                        : r.escalated
+                          ? "bg-alert/12 text-alert"
+                          : "bg-accent/12 text-accent"
+                    }`}
+                  >
+                    {STATUS_LABEL[r.status] || r.status}
+                  </span>
                 </div>
-                <span
-                  className={`rounded-lg px-2 py-1 text-[9px] font-bold ${
-                    r.status === "resolved"
-                      ? "bg-ok/12 text-ok"
-                      : r.escalated
-                        ? "bg-alert/12 text-alert"
-                        : "bg-accent/12 text-accent"
-                  }`}
-                >
-                  {STATUS_LABEL[r.status]}
-                </span>
-              </div>
-              {r.escalated && (
-                <p className="mt-1.5 pl-[58px] text-[9px] font-semibold text-alert">
-                  Auto complaint raised with the corporation
-                </p>
-              )}
-            </Link>
-          ))}
+
+                <div className="flex items-center gap-2.5">
+                  <PhotoImg
+                    path={r.photo_url}
+                    alt={categoryLabel(r.category)}
+                    className="size-12 shrink-0 rounded-lg object-cover"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-[12px] font-bold text-ink">
+                      {categoryLabel(r.category)}
+                    </p>
+                    <p className="truncate text-[10px] text-muted-foreground">
+                      {r.address || "Pinned location"} · {timeAgo(r.created_at)}
+                    </p>
+                    <p className="truncate text-[9px] font-semibold text-brand mt-0.5">
+                      Assigned: {authContact.department}
+                    </p>
+                  </div>
+                </div>
+
+                {r.escalated && (
+                  <p className="text-[9px] font-semibold text-alert">
+                    Auto complaint raised with the corporation
+                  </p>
+                )}
+              </Link>
+            );
+          })}
           {rows.length === 0 && (
             <p className="py-6 text-center text-[11px] text-muted-foreground">
               Nothing matches these filters yet.
@@ -170,3 +183,4 @@ function ReportsPage() {
     </AppShell>
   );
 }
+
